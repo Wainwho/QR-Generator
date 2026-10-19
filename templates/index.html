@@ -34,7 +34,7 @@
             <h1 class="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
                 QR Генератор
             </h1>
-            <p class="text-slate-400 text-sm mt-1">Создай кастомный QR-код</p>
+            <p class="text-slate-400 text-sm mt-1">Создай кастомный QR-код с градиентом</p>
         </div>
 
         <div class="mb-5">
@@ -51,12 +51,21 @@
                     class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all">
             </div>
 
+            <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-4 py-3 rounded-2xl">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Использовать градиент</span>
+                <input type="checkbox" id="gradientToggle" onchange="toggleGradient()" class="w-5 h-5 accent-indigo-600 rounded cursor-pointer">
+            </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Цвет узоров</label>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2" id="labelColor1">Цвет узоров</label>
                     <input type="color" id="fillColor" value="#1e293b">
                 </div>
-                <div>
+                <div id="endColorContainer" class="hidden">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Конечный цвет</label>
+                    <input type="color" id="fillColorEnd" value="#4f46e5">
+                </div>
+                <div id="bgColorContainer">
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Цвет фона</label>
                     <input type="color" id="bgColor" value="#ffffff">
                 </div>
@@ -84,9 +93,25 @@
     <script>
         document.getElementById('quickLink').href = window.location.href;
 
+        function toggleGradient() {
+            const isChecked = document.getElementById('gradientToggle').checked;
+            const endColorContainer = document.getElementById('endColorContainer');
+            const labelColor1 = document.getElementById('labelColor1');
+
+            if (isChecked) {
+                endColorContainer.classList.remove('hidden');
+                labelColor1.textContent = 'Начальный цвет';
+            } else {
+                endColorContainer.classList.add('hidden');
+                labelColor1.textContent = 'Цвет узоров';
+            }
+        }
+
         async function generateQR() {
             const text = document.getElementById('qrInput').value.trim();
+            const use_gradient = document.getElementById('gradientToggle').checked;
             const fill_color = document.getElementById('fillColor').value;
+            const fill_color_end = document.getElementById('fillColorEnd').value;
             const back_color = document.getElementById('bgColor').value;
 
             if (!text) return;
@@ -94,7 +119,7 @@
             const response = await fetch('/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, fill_color, back_color })
+                body: JSON.stringify({ text, use_gradient, fill_color, fill_color_end, back_color })
             });
 
             if (response.ok) {
