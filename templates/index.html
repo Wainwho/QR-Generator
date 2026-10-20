@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="{{ current_lang }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор QR-кодов</title>
+    <title>{{ t.web_title }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -12,86 +12,137 @@
             -webkit-appearance: none;
             border: none;
             width: 100%;
-            height: 40px;
-            border-radius: 12px;
+            height: 45px;
+            border-radius: 14px;
             cursor: pointer;
             background: transparent;
         }
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-        input[type="color"]::-webkit-color-swatch {
-            border: 1px solid #334155;
-            border-radius: 12px;
-        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 1px solid #334155; border-radius: 14px; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
-        
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-                QR Генератор
+    <header class="w-full px-6 py-4 flex justify-between items-center border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+                {{ t.web_title }}
             </h1>
-            <p class="text-slate-400 text-sm mt-1">Создай кастомный QR-код с градиентом</p>
         </div>
-
-        <div class="mb-5">
-            <a id="quickLink" href="#" target="_blank" 
-               class="flex items-center justify-center gap-2 w-full bg-slate-800/80 hover:bg-slate-800 text-indigo-400 hover:text-indigo-300 font-medium py-2.5 px-4 rounded-2xl border border-slate-700/50 transition-all text-sm">
-                <span>🔗 Открыть приложение в новой вкладке</span>
-            </a>
+        <div class="flex items-center gap-2">
+            <a href="/?lang=ru" class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all {% if current_lang == 'ru' %}bg-indigo-600 text-white shadow-lg shadow-indigo-600/30{% else %}bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200{% endif %}">RU</a>
+            <a href="/?lang=en" class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all {% if current_lang == 'en' %}bg-indigo-600 text-white shadow-lg shadow-indigo-600/30{% else %}bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200{% endif %}">EN</a>
         </div>
+    </header>
 
-        <div class="space-y-4">
+    <main class="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <div class="lg:col-span-7 bg-slate-900/50 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Ссылка или текст</label>
-                <input type="text" id="qrInput" placeholder="https://example.com" 
-                    class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all">
+                <h2 class="text-lg font-semibold text-slate-200 mb-1">{{ t.web_subtitle }}</h2>
+                <p class="text-slate-400 text-sm">Введите ссылку или текст, настройте внешний вид и получите готовый QR-код.</p>
             </div>
 
-            <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-4 py-3 rounded-2xl">
-                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Использовать градиент</span>
-                <input type="checkbox" id="gradientToggle" onchange="toggleGradient()" class="w-5 h-5 accent-indigo-600 rounded cursor-pointer">
+            <div>
+                <a id="quickLink" href="#" target="_blank" 
+                   class="flex items-center justify-center gap-2 w-full bg-slate-800/60 hover:bg-slate-800 text-indigo-400 hover:text-indigo-300 font-medium py-3 px-4 rounded-2xl border border-slate-700/50 transition-all text-sm">
+                    <span>{{ t.open_tab }}</span>
+                </a>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2" id="labelColor1">Цвет узоров</label>
-                    <input type="color" id="fillColor" value="#1e293b">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{{ t.input_label }}</label>
+                    <input type="text" id="qrInput" placeholder="{{ t.input_placeholder }}" 
+                        class="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3.5 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-all text-sm">
                 </div>
-                <div id="endColorContainer" class="hidden">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Конечный цвет</label>
-                    <input type="color" id="fillColorEnd" value="#4f46e5">
-                </div>
-                <div id="bgColorContainer">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Цвет фона</label>
-                    <input type="color" id="bgColor" value="#ffffff">
-                </div>
-            </div>
 
-            <button onclick="generateQR()" 
-                class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] font-semibold py-3.5 rounded-2xl transition-all shadow-lg shadow-indigo-600/30">
-                Сгенерировать код
-            </button>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{{ t.format_label }}</label>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1.5 border border-slate-800 rounded-2xl">
+                        <button type="button" onclick="setFormat('png')" id="btnPng" class="py-3 rounded-xl text-xs font-semibold transition-all bg-indigo-600 text-white shadow-md">PNG (Растр)</button>
+                        <button type="button" onclick="setFormat('svg')" id="btnSvg" class="py-3 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-slate-200">SVG (Вектор)</button>
+                    </div>
+                </div>
+
+                <!-- Блок настроек цвета (скрывается при выборе SVG) -->
+                <div id="customizationSection" class="space-y-4 transition-all duration-300">
+                    <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-4 py-3.5 rounded-2xl">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">{{ t.gradient_label }}</span>
+                        <input type="checkbox" id="gradientToggle" onchange="toggleGradient()" class="w-5 h-5 accent-indigo-600 rounded cursor-pointer">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2" id="labelColor1">{{ t.color1_label }}</label>
+                            <input type="color" id="fillColor" value="#1e293b">
+                        </div>
+                        <div id="endColorContainer" class="hidden">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{{ t.color2_label }}</label>
+                            <input type="color" id="fillColorEnd" value="#4f46e5">
+                        </div>
+                        <div id="bgColorContainer">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">{{ t.bg_label }}</label>
+                            <input type="color" id="bgColor" value="#ffffff">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="generateQR()" 
+                    class="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] font-semibold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-600/30 text-sm">
+                    {{ t.gen_btn }}
+                </button>
+            </div>
         </div>
 
-        <div id="resultContainer" class="hidden mt-6 pt-6 border-t border-slate-800/80 flex flex-col items-center animate-fade-in">
-            <div id="qrImageWrapper" class="p-4 rounded-2xl shadow-inner mb-4 inline-block">
-                <img id="qrImage" src="" alt="QR Code" class="w-48 h-48 object-contain">
+        <div class="lg:col-span-5 bg-slate-900/50 border border-slate-800/80 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl flex flex-col items-center justify-center min-h-[420px]">
+            <div id="placeholderResult" class="text-center text-slate-500 space-y-3">
+                <svg class="w-16 h-16 mx-auto opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                </svg>
+                <p class="text-sm">Здесь появится ваш сгенерированный QR-код</p>
             </div>
-            
-            <a id="downloadBtn" download="qrcode.png" 
-                class="w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-3 rounded-2xl transition-all border border-slate-700/50">
-                Скачать PNG
-            </a>
+
+            <div id="resultContainer" class="hidden w-full flex flex-col items-center animate-fade-in space-y-6">
+                <div id="qrImageWrapper" class="p-6 rounded-2xl shadow-inner inline-block bg-white border border-slate-700/30">
+                    <img id="qrImage" src="" alt="QR Code" class="w-64 h-64 object-contain">
+                </div>
+                
+                <a id="downloadBtn" download="qrcode.png" 
+                    class="w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-3.5 rounded-2xl transition-all border border-slate-700/50 text-sm shadow-md">
+                    {{ t.download_btn }}
+                </a>
+            </div>
         </div>
 
-    </div>
+    </main>
 
     <script>
-        document.getElementById('quickLink').href = window.location.href;
+        const currentLang = "{{ current_lang }}";
+        const urlObj = new URL(window.location.href);
+        urlObj.searchParams.set('lang', currentLang);
+        document.getElementById('quickLink').href = urlObj.toString();
+
+        let selectedFormat = 'png';
+
+        function setFormat(fmt) {
+            selectedFormat = fmt;
+            const btnPng = document.getElementById('btnPng');
+            const btnSvg = document.getElementById('btnSvg');
+            const customizationSection = document.getElementById('customizationSection');
+
+            if (fmt === 'png') {
+                btnPng.className = "py-3 rounded-xl text-xs font-semibold transition-all bg-indigo-600 text-white shadow-md";
+                btnSvg.className = "py-3 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-slate-200";
+                customizationSection.style.opacity = "1";
+                customizationSection.style.pointerEvents = "auto";
+            } else {
+                btnSvg.className = "py-3 rounded-xl text-xs font-semibold transition-all bg-indigo-600 text-white shadow-md";
+                btnPng.className = "py-3 rounded-xl text-xs font-semibold transition-all text-slate-400 hover:text-slate-200";
+                customizationSection.style.opacity = "0.4";
+                customizationSection.style.pointerEvents = "none";
+            }
+        }
 
         function toggleGradient() {
             const isChecked = document.getElementById('gradientToggle').checked;
@@ -100,10 +151,10 @@
 
             if (isChecked) {
                 endColorContainer.classList.remove('hidden');
-                labelColor1.textContent = 'Начальный цвет';
+                labelColor1.textContent = currentLang === 'en' ? 'Start Color' : 'Начальный цвет';
             } else {
                 endColorContainer.classList.add('hidden');
-                labelColor1.textContent = 'Цвет узоров';
+                labelColor1.textContent = currentLang === 'en' ? 'Pattern Color' : 'Цвет узоров';
             }
         }
 
@@ -119,14 +170,20 @@
             const response = await fetch('/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text, use_gradient, fill_color, fill_color_end, back_color })
+                body: JSON.stringify({ text, use_gradient, fill_color, fill_color_end, back_color, format: selectedFormat })
             });
 
             if (response.ok) {
                 const data = await response.json();
                 document.getElementById('qrImage').src = data.qr_image;
-                document.getElementById('qrImageWrapper').style.backgroundColor = back_color;
-                document.getElementById('downloadBtn').href = data.qr_image;
+                document.getElementById('qrImageWrapper').style.backgroundColor = selectedFormat === 'svg' ? '#ffffff' : back_color;
+                
+                const downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.href = data.qr_image;
+                downloadBtn.download = `qrcode.${data.format}`;
+                downloadBtn.textContent = currentLang === 'en' ? `Download ${data.format.toUpperCase()}` : `Скачать ${data.format.toUpperCase()}`;
+
+                document.getElementById('placeholderResult').classList.add('hidden');
                 document.getElementById('resultContainer').classList.remove('hidden');
             }
         }
